@@ -1,4 +1,4 @@
-use cosmrs::proto::tendermint::abci::ResponseFinalizeBlock;
+use cosmrs::proto::tendermint::v0_37::abci::ResponseDeliverTx;
 use cosmwasm_std::CosmosMsg;
 use serde::de::DeserializeOwned;
 
@@ -42,7 +42,7 @@ pub trait Runner<'a> {
     where
         R: ::prost::Message + Default;
 
-    fn execute_tx(&self, tx_bytes: &[u8]) -> RunnerResult<ResponseFinalizeBlock>;
+    fn execute_tx(&self, tx_bytes: &[u8]) -> RunnerResult<ResponseDeliverTx>;
 
     fn execute_cosmos_msgs<S>(
         &self,
@@ -56,16 +56,9 @@ pub trait Runner<'a> {
             .iter()
             .map(|msg| match msg {
                 CosmosMsg::Bank(msg) => bank_msg_to_any(msg, signer),
-
-                #[allow(deprecated)]
                 CosmosMsg::Stargate { type_url, value } => Ok(cosmrs::Any {
                     type_url: type_url.clone(),
                     value: value.to_vec(),
-                }),
-                #[cfg(feature = "cosmwasm_2_0")]
-                CosmosMsg::Any(msg) => Ok(cosmrs::Any {
-                    type_url: msg.type_url.clone(),
-                    value: msg.value.to_vec(),
                 }),
                 CosmosMsg::Wasm(msg) => wasm_msg_to_any(msg, signer),
                 _ => todo!("unsupported cosmos msg variant"),

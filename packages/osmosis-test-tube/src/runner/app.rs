@@ -1,4 +1,4 @@
-use cosmrs::proto::tendermint::abci::ResponseFinalizeBlock;
+use cosmrs::proto::tendermint::v0_37::abci::ResponseDeliverTx;
 use cosmrs::tx::{self, Fee, SignerInfo};
 use cosmrs::Any;
 use cosmwasm_std::{Coin, Timestamp};
@@ -132,7 +132,7 @@ impl OsmosisTestApp {
         account: &SigningAccount,
         signer: &SigningAccount,
         selected_authenticators: &[u64],
-    ) -> RunnerResult<ResponseFinalizeBlock>
+    ) -> RunnerResult<ResponseDeliverTx>
     where
         I: IntoIterator<Item = cosmrs::Any> + Clone,
     {
@@ -169,17 +169,11 @@ impl OsmosisTestApp {
     where
         I: IntoIterator<Item = cosmrs::Any>,
     {
-        let ext = TxExtension {
-            selected_authenticators: selected_authenticators.to_vec(),
-        }
-        .to_any();
-        let ext_ops = vec![cosmrs::Any {
-            type_url: ext.type_url,
-            value: ext.value,
-        }];
         let tx_body = tx::Body {
             messages: msgs.into_iter().map(Into::into).collect(),
-            non_critical_extension_options: ext_ops,
+            non_critical_extension_options: vec![Any::from_msg(TxExtension {
+                selected_authenticators: selected_authenticators.to_vec(),
+            })],
             ..Default::default()
         };
 
@@ -231,7 +225,7 @@ impl<'a> Runner<'a> for OsmosisTestApp {
         self.inner.query(path, q)
     }
 
-    fn execute_tx(&self, tx_bytes: &[u8]) -> RunnerResult<ResponseFinalizeBlock> {
+    fn execute_tx(&self, tx_bytes: &[u8]) -> RunnerResult<ResponseDeliverTx> {
         self.inner.execute_tx(tx_bytes)
     }
 
@@ -532,7 +526,7 @@ mod tests {
             amount: amount.clone(),
             gas_limit,
         });
-        wasm.store_code(&wasm_byte_code, None, &bob).unwrap();
+        let res = wasm.store_code(&wasm_byte_code, None, &bob).unwrap();
 
         let bob_balance = Bank::new(&app)
             .query_all_balances(&QueryAllBalancesRequest {
@@ -549,19 +543,10 @@ mod tests {
             .parse::<u128>()
             .unwrap();
 
-        assert_eq!(bob_balance, initial_balance - amount.amount.u128());
-
-        // run with low gas limit should fail
-        let bob = bob.with_fee_setting(FeeSetting::Custom {
-            amount: amount.clone(),
-            gas_limit: 100_000,
-        });
-        let err = wasm.store_code(&wasm_byte_code, None, &bob).unwrap_err();
+        assert_eq!(res.gas_info.gas_wanted, gas_limit);
         assert_eq!(
-            err,
-            RunnerError::ExecuteError {
-                msg: "out of gas in location: txSize; gasWanted: 100000, gasUsed: 1876896: out of gas".to_string()
-            }
+            bob_balance,
+            initial_balance - amount.amount.to_string().parse::<u128>().unwrap()
         );
     }
 

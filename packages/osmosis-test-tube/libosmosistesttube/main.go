@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"os"
 	"sync"
-	"time"
 
 	// helpers
 	proto "github.com/cosmos/gogoproto/proto"
@@ -19,11 +18,10 @@ import (
 	abci "github.com/cometbft/cometbft/abci/types"
 
 	// cosmos sdk
-	coreheader "cosmossdk.io/core/header"
+
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	banktestutil "github.com/cosmos/cosmos-sdk/x/bank/testutil"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
@@ -31,7 +29,6 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
 	// cosmwasm-testing
-
 	"github.com/osmosis-labs/test-tube/osmosis-test-tube/result"
 	"github.com/osmosis-labs/test-tube/osmosis-test-tube/testenv"
 	// osmosis
@@ -42,7 +39,6 @@ var (
 	envCounter  uint64 = 0
 	envRegister        = sync.Map{}
 	mu          sync.Mutex
-	blockTime   uint64 = 5
 )
 
 //export InitTestEnv
@@ -77,12 +73,12 @@ func InitTestEnv() uint64 {
 	// Allow testing unoptimized contract
 	wasmtypes.MaxWasmSize = 1024 * 1024 * 1024 * 1024 * 1024
 
+	env.BeginNewBlock(false, 5)
 	env.FundValidators()
 
-	err = produceEmptyBlock(env)
-	if err != nil {
-		panic(err)
-	}
+	reqEndBlock := abci.RequestEndBlock{Height: env.Ctx.BlockHeight()}
+	env.App.EndBlock(reqEndBlock)
+	env.App.Commit()
 
 	envRegister.Store(id, *env)
 
@@ -128,122 +124,40 @@ func InitAccount(envId uint64, coinsJson string) *C.char {
 
 	}
 
-	err := banktestutil.FundAccount(env.Ctx, env.App.BankKeeper, accAddr, coins)
+	err := banktestutil.FundAccount(env.App.BankKeeper, env.Ctx, accAddr, coins)
 	if err != nil {
 		panic(errors.Wrapf(err, "Failed to fund account"))
 	}
 
 	base64Priv := base64.StdEncoding.EncodeToString(priv.Bytes())
 
-	// make sure block is produced so that updated state is on chain
-	err = produceEmptyBlock(&env)
-	if err != nil {
-		panic(err)
-	}
 	envRegister.Store(envId, env)
 
 	return C.CString(base64Priv)
 }
 
-func produceEmptyBlock(env *testenv.TestEnv) error {
-	_, err := finalizeBlock(env, [][]byte{}, blockTime)
-	if err != nil {
-		return err
-	}
-	_, err = commitWithCustomIncBlockTime(env)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 //export IncreaseTime
-func IncreaseTime(envId uint64, seconds uint64) int64 {
+func IncreaseTime(envId uint64, seconds uint64) {
 	env := loadEnv(envId)
-	_, err := finalizeBlock(&env, [][]byte{}, seconds)
-	if err != nil {
-		panic(err)
-	}
-	_, err = commitWithCustomIncBlockTime(&env)
-	if err != nil {
-		panic(err)
-	}
+	env.BeginNewBlock(false, seconds)
 	envRegister.Store(envId, env)
-
-	return env.Ctx.BlockTime().UnixNano()
+	EndBlock(envId)
 }
 
-//export FinalizeBlock
-func FinalizeBlock(envId uint64, tx string) *C.char {
+//export BeginBlock
+func BeginBlock(envId uint64) {
 	env := loadEnv(envId)
-
-	txBytes, err := base64.StdEncoding.DecodeString(tx)
-	if err != nil {
-		return encodeErrToResultBytes(result.ExecuteError, err)
-	}
-
-	res, err := finalizeBlock(&env, [][]byte{txBytes}, blockTime)
-
-	if err != nil {
-		return encodeErrToResultBytes(result.ExecuteError, err)
-	}
-
+	env.BeginNewBlock(false, 5)
 	envRegister.Store(envId, env)
-
-	bz, err := proto.Marshal(res)
-	if err != nil {
-		return encodeErrToResultBytes(result.ExecuteError, err)
-	}
-
-	return encodeBytesResultBytes(bz)
 }
 
-func finalizeBlock(env *testenv.TestEnv, txs [][]byte, seconds uint64) (*abci.ResponseFinalizeBlock, error) {
-	newBlockTime := env.Ctx.BlockTime().Add(time.Duration(seconds) * time.Second)
-
-	header := env.Ctx.BlockHeader()
-	header.Time = newBlockTime
-	header.Height++
-
-	env.Ctx = env.App.BaseApp.NewUncachedContext(false, header).WithHeaderInfo(coreheader.Info{
-		Height: header.Height,
-		Time:   header.Time,
-	})
-
-	res, err := env.App.FinalizeBlock(&abci.RequestFinalizeBlock{
-		Txs:    txs,
-		Height: env.Ctx.BlockHeight(),
-		Time:   env.Ctx.BlockTime(),
-	})
-
-	return res, err
-}
-
-//export Commit
-func Commit(envId uint64) *C.char {
+//export EndBlock
+func EndBlock(envId uint64) {
 	env := loadEnv(envId)
-	res, err := commitWithCustomIncBlockTime(&env)
-	if err != nil {
-		return encodeErrToResultBytes(result.ExecuteError, err)
-	}
-
+	reqEndBlock := abci.RequestEndBlock{Height: env.Ctx.BlockHeight()}
+	env.App.EndBlock(reqEndBlock)
+	env.App.Commit()
 	envRegister.Store(envId, env)
-
-	bz, err := proto.Marshal(res)
-	if err != nil {
-		return encodeErrToResultBytes(result.ExecuteError, err)
-	}
-
-	return encodeBytesResultBytes(bz)
-}
-
-func commitWithCustomIncBlockTime(env *testenv.TestEnv) (*abci.ResponseCommit, error) {
-	res, err := env.App.Commit()
-	if err != nil {
-		return nil, err
-	}
-
-	return res, nil
 }
 
 //export WasmSudo
@@ -270,6 +184,36 @@ func WasmSudo(envId uint64, bech32Address, msgJson string) *C.char {
 	return encodeBytesResultBytes(res)
 }
 
+//export Execute
+func Execute(envId uint64, base64ReqDeliverTx string) *C.char {
+	env := loadEnv(envId)
+	// Temp fix for concurrency issue
+	mu.Lock()
+	defer mu.Unlock()
+
+	reqDeliverTxBytes, err := base64.StdEncoding.DecodeString(base64ReqDeliverTx)
+	if err != nil {
+		panic(err)
+	}
+
+	reqDeliverTx := abci.RequestDeliverTx{}
+	err = proto.Unmarshal(reqDeliverTxBytes, &reqDeliverTx)
+	if err != nil {
+		return encodeErrToResultBytes(result.ExecuteError, err)
+	}
+
+	resDeliverTx := env.App.DeliverTx(reqDeliverTx)
+	bz, err := proto.Marshal(&resDeliverTx)
+
+	if err != nil {
+		panic(err)
+	}
+
+	envRegister.Store(envId, env)
+
+	return encodeBytesResultBytes(bz)
+}
+
 //export Query
 func Query(envId uint64, path, base64QueryMsgBytes string) *C.char {
 	env := loadEnv(envId)
@@ -286,8 +230,7 @@ func Query(envId uint64, path, base64QueryMsgBytes string) *C.char {
 		err := errors.New("No route found for `" + path + "`")
 		return encodeErrToResultBytes(result.QueryError, err)
 	}
-
-	res, err := route(env.Ctx, &req)
+	res, err := route(env.Ctx, req)
 
 	if err != nil {
 		return encodeErrToResultBytes(result.QueryError, err)
@@ -354,6 +297,7 @@ func Simulate(envId uint64, base64TxBytes string) *C.char { // => base64GasInfo
 	}
 
 	gasInfo, _, err := env.App.Simulate(txBytes)
+
 	if err != nil {
 		return encodeErrToResultBytes(result.ExecuteError, err)
 	}
@@ -401,14 +345,6 @@ func SetParamSet(envId uint64, subspaceName, base64ParamSetBytes string) *C.char
 	}
 
 	subspace.SetParamSet(env.Ctx, pset)
-
-	// make sure block is produced so that updated state is on chain
-	err = produceEmptyBlock(&env)
-	if err != nil {
-		panic(err)
-	}
-
-	envRegister.Store(envId, env)
 
 	// return empty bytes if no error
 	return encodeBytesResultBytes([]byte{})

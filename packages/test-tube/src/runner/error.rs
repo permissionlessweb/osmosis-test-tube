@@ -1,6 +1,7 @@
 use cosmrs::rpc::error::Error as TendermintRpcError;
 use cosmrs::tendermint::Error as TendermintError;
 use cosmrs::ErrorReport;
+use std::num::ParseIntError;
 use std::str::Utf8Error;
 use thiserror::Error;
 
@@ -11,6 +12,9 @@ pub enum RunnerError {
 
     #[error("unable to decode response")]
     DecodeError(#[from] DecodeError),
+
+    #[error("unable to decode response")]
+    ParseIntError(#[from] ParseIntError),
 
     #[error("query error: {}", .msg)]
     QueryError { msg: String },

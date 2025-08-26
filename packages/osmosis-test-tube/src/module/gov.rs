@@ -152,10 +152,7 @@ impl<'a> GovWithAppAccess<'a> {
             .expect("voting period must exist");
 
         // increase time to pass voting period
-        self.app.increase_time(voting_period.seconds as u64);
-
-        // create next block to trigger proposal execution
-        self.app.increase_time(1);
+        self.app.increase_time(voting_period.seconds as u64 + 1);
 
         Ok(submit_proposal_res)
     }
