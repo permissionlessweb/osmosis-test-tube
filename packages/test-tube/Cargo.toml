@@ -19,7 +19,7 @@ serde_json = "1.0.85"
 thiserror = "1.0.34"
 
 [dev-dependencies]
-cw1-whitelist  = { git = "https://github.com/permissionlessweb/cw-plus",branch = "bump/v3", version = "3.0.0"  }
+cw1-whitelist  = { git = "https://github.com/permissionlessweb/cw-plus", version = "3.0.0"  }
 rayon = "1.5.3"
 
 [features]

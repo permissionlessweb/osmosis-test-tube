@@ -30,6 +30,6 @@ wasm-sudo = ["test-tube/wasm-sudo"]
 bindgen = "0.69.1"
 
 [dev-dependencies]
-cw1-whitelist  = { git = "https://github.com/permissionlessweb/cw-plus",branch = "bump/v3", version = "3.0.0"  }
+cw1-whitelist  = { git = "https://github.com/permissionlessweb/cw-plus", version = "3.0.0"  }
 rayon = "1.5.3"
 simple-sudo = { path = "../../test_contracts/simple-sudo" }
