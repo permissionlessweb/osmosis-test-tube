@@ -36,7 +36,7 @@ cosmwasm-schema = "3.0.1"
 cosmwasm-std = {version = "3.0.1"}
 cw-storage-plus = "3.0.0"
 cw2 = "3.0.0"
-schemars = "0.8.4"
+schemars = "0.8"
 serde = {version = "1.0.189", default-features = false, features = ["derive"]}
 thiserror = {version = "1.0.49"}
 

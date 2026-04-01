@@ -293,6 +293,7 @@ mod tests {
                     token_out_denom: "uosmo".to_string(),
                 }],
                 token_in: format!("{}{}", "1000000", denom0),
+                sender: trader.address(),
             })
             .unwrap();
         let expected_token_out = res.token_out_amount;
