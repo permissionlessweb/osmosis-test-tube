@@ -32,13 +32,13 @@ optimize = """docker run --rm -v "$(pwd)":/code \
 """
 
 [dependencies]
-cosmwasm-schema = "3.0.4"
-cosmwasm-std = {version = "3.0.4"}
-cw-storage-plus = "3.0.1"
-cw2 = { path = "../../../cw-minus/packages/cw2" }
+cosmwasm-schema = { git = "https://github.com/permissionlessweb/cosmwasm", branch = "mvp" }
+cosmwasm-std = { git = "https://github.com/permissionlessweb/cosmwasm", branch = "mvp" }
+cw-storage-plus = { git = "https://github.com/permissionlessweb/cw-storage-plus", branch = "mvp" }
+cw2 = { git = "https://github.com/permissionlessweb/cw-minus", branch = "main" }
 schemars = "0.8"
 serde = {version = "1.0.189", default-features = false, features = ["derive"]}
 thiserror = {version = "1.0.49"}
 
 [dev-dependencies]
-cw-multi-test = "3.0.1"
+cw-multi-test = { git = "https://github.com/permissionlessweb/cw-multi-test", branch = "mvp" }
