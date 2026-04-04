@@ -13,7 +13,6 @@ exclude = ["osmosis", "test_artifacts"]
 base64 = "0.21.5"
 cosmrs = { path = "../../../cosmos-rust/cosmrs" }
 cosmwasm-std = "3.0.1"
-# osmosis-std = { version = "0.26.0", git = "https://github.com/permissionlessweb/osmosis-rust" }
 osmosis-std = { path = "../../../osmosis-rust/packages/osmosis-std" }
 prost = { version = "0.14.1", default-features = false }
 serde = "1.0.144"
