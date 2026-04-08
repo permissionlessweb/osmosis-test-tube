@@ -10,16 +10,16 @@ version = "0.7.0"
 
 [dependencies]
 base64 = "0.21.5"
-cosmrs = { path = "../../../cosmos-rust/cosmrs" }
-cosmwasm-std = { path = "../../../ZK/cw/zk-cosmwasm/packages/std", features = ["stargate"] }
-osmosis-std = { path = "../../../osmosis-rust/packages/osmosis-std", optional = true }
+cosmrs = { git = "https://github.com/permissionlessweb/cosmos-rust", branch = "zk-mvp" }
+cosmwasm-std = { git = "https://github.com/permissionlessweb/cosmwasm", branch = "zk-mvp", features = ["stargate"] }
+osmosis-std = { git = "https://github.com/permissionlessweb/osmosis-rust", branch = "zk-mvp", optional = true }
 prost = { version = "0.14.1", default-features = false }
 serde = "1.0.144"
 serde_json = "1.0.85"
 thiserror = "1.0.34"
 
 [dev-dependencies]
-cw1-whitelist = { path = "../../../cw-plus/contracts/cw1-whitelist" }
+cw1-whitelist = { git = "https://github.com/permissionlessweb/cw-plus", branch = "zk-mvp" }
 rayon = "1.5.3"
 
 [features]

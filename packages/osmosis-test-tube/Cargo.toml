@@ -11,13 +11,13 @@ exclude = ["osmosis", "test_artifacts"]
 
 [dependencies]
 base64 = "0.21.5"
-cosmrs = { path = "../../../cosmos-rust/cosmrs" }
-cosmwasm-std = { path = "../../../ZK/cw/zk-cosmwasm/packages/std" }
-osmosis-std = { path = "../../../osmosis-rust/packages/osmosis-std" }
+cosmrs = { git = "https://github.com/permissionlessweb/cosmos-rust", branch = "zk-mvp" }
+cosmwasm-std = { git = "https://github.com/permissionlessweb/cosmwasm", branch = "zk-mvp" }
+osmosis-std = { git = "https://github.com/permissionlessweb/osmosis-rust", branch = "zk-mvp" }
 prost = { version = "0.14.1", default-features = false }
 serde = "1.0.144"
 serde_json = "1.0.85"
-test-tube = { path = "../test-tube", features = ["module-wrappers"] }
+test-tube = { git = "https://github.com/permissionlessweb/osmosis-test-tube", branch = "zk-mvp", features = ["module-wrappers"] }
 thiserror = "1.0.34"
 
 [features]
@@ -28,6 +28,6 @@ wasm-sudo = ["test-tube/wasm-sudo"]
 bindgen = "0.69.1"
 
 [dev-dependencies]
-cw1-whitelist = { path = "../../../cw-plus/contracts/cw1-whitelist" }
+cw1-whitelist = { git = "https://github.com/permissionlessweb/cw-plus", branch = "zk-mvp" }
 rayon = "1.5.3"
 simple-sudo = { path = "../../test_contracts/simple-sudo" }
