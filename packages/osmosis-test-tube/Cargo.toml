@@ -9,6 +9,10 @@ version = "25.0.0"
 
 exclude = ["osmosis", "test_artifacts"]
 
+[features]
+default = []
+wasm-sudo = ["test-tube/wasm-sudo"]
+
 [dependencies]
 base64 = "0.21.5"
 cosmrs = { git = "https://github.com/permissionlessweb/cosmos-rust", branch = "zk-mvp" }
@@ -17,12 +21,8 @@ osmosis-std = { git = "https://github.com/permissionlessweb/osmosis-rust", branc
 prost = { version = "0.14.1", default-features = false }
 serde = "1.0.144"
 serde_json = "1.0.85"
-test-tube = { git = "https://github.com/permissionlessweb/osmosis-test-tube", branch = "zk-mvp", features = ["module-wrappers"] }
+test-tube = { git = "https://github.com/permissionlessweb/osmosis-test-tube", branch = "zk-mvp" }
 thiserror = "1.0.34"
-
-[features]
-default = []
-wasm-sudo = ["test-tube/wasm-sudo"]
 
 [build-dependencies]
 bindgen = "0.69.1"
