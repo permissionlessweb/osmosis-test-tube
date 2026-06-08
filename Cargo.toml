@@ -1,6 +1,7 @@
 [workspace]
-members = [
-  "packages/*",
-  "test_contracts/*",
-]
+members = ["packages/*", "test_contracts/*"]
 resolver = "2"
+
+[patch.'https://github.com/permissionlessweb/osmosis-test-tube']
+osmosis-test-tube = { path = "packages/osmosis-test-tube" }
+test-tube = { path = "packages/test-tube" }

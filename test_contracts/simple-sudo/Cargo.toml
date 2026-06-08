@@ -21,16 +21,16 @@ crate-type = ["cdylib", "rlib"]
 library = []
 
 [dependencies]
-cosmwasm-schema = { git = "https://github.com/permissionlessweb/cosmwasm", branch = "zk-mvp" }
-cosmwasm-std = { git = "https://github.com/permissionlessweb/cosmwasm", branch = "zk-mvp" }
-cw-storage-plus = { git = "https://github.com/permissionlessweb/cw-storage-plus", branch = "zk-mvp" }
-cw2 = { git = "https://github.com/permissionlessweb/cw-minus", branch = "zk-mvp" }
+cosmwasm-schema = { path = "../../../cosmwasm/packages/schema" }
+cosmwasm-std = { path = "../../../cosmwasm/packages/std" }
+cw-storage-plus = { path = "../../../cw-storage-plus" }
+cw2 = { path = "../../../cw-minus/packages/cw2" }
 schemars = "0.8"
 serde = { version = "1.0.189", default-features = false, features = ["derive"] }
 thiserror = { version = "1.0.49" }
 
 [dev-dependencies]
-cw-multi-test = { package = "abstract-cw-multi-test", git = "https://github.com/permissionlessweb/cw-multi-test-fork", branch = "zk-mvp" }
+cw-multi-test = { package = "abstract-cw-multi-test", path = "../../../cw-multi-test-fork" }
 
 [profile.release]
 codegen-units = 1
