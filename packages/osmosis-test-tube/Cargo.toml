@@ -21,7 +21,7 @@ osmosis-std = { git = "https://github.com/permissionlessweb/osmosis-rust", branc
 prost = { version = "0.14.1", default-features = false }
 serde = "1.0.144"
 serde_json = "1.0.85"
-test-tube = { git = "https://github.com/permissionlessweb/osmosis-test-tube", branch = "zk-mvp" }
+test-tube = { git = "https://github.com/permissionlessweb/osmosis-test-tube", branch = "zk-mvp", features = ["bank", "wasm"] }
 thiserror = "1.0.34"
 
 [build-dependencies]
