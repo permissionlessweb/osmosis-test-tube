@@ -5,3 +5,25 @@ resolver = "2"
 [patch.'https://github.com/permissionlessweb/osmosis-test-tube']
 osmosis-test-tube = { path = "packages/osmosis-test-tube" }
 test-tube = { path = "packages/test-tube" }
+
+[patch.'https://github.com/permissionlessweb/cosmos-rust']
+cosmrs = { path = "../cosmos-rust/cosmrs" }
+
+[patch.'https://github.com/permissionlessweb/cosmwasm']
+cosmwasm-schema = { path = "../cosmwasm/packages/schema" }
+cosmwasm-std = { path = "../cosmwasm/packages/std" }
+
+[patch.'https://github.com/permissionlessweb/osmosis-rust']
+osmosis-std = { path = "../osmosis-rust/packages/osmosis-std" }
+
+[patch.'https://github.com/permissionlessweb/cw-plus']
+cw1-whitelist = { path = "../cw-plus/contracts/cw1-whitelist" }
+
+[patch.'https://github.com/permissionlessweb/cw-storage-plus']
+cw-storage-plus = { path = "../cw-storage-plus" }
+
+[patch.'https://github.com/permissionlessweb/cw-minus']
+cw2 = { path = "../cw-minus/packages/cw2" }
+
+[patch.'https://github.com/permissionlessweb/cw-multi-test-fork']
+abstract-cw-multi-test = { path = "../cw-multi-test-fork" }

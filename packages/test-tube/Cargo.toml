@@ -18,14 +18,14 @@ wasm = ["osmosis-std"]
 
 [dependencies]
 base64 = "0.21.5"
-cosmrs = { path = "../../../cosmos-rust/cosmrs", features = ["rpc"] }
-cosmwasm-std = { path = "../../../cosmwasm/packages/std", features = ["stargate"] }
-osmosis-std = { path = "../../../osmosis-rust/packages/osmosis-std", optional = true }
+cosmrs = { git = "https://github.com/permissionlessweb/cosmos-rust", rev = "2a070ec1111a14a9e479e49b52c21bbf0093b117", features = ["rpc"] }
+cosmwasm-std = { git = "https://github.com/permissionlessweb/cosmwasm", rev = "e20646e2d9a9c4f93e993eb0656afa795f6e387a", features = ["stargate"] }
+osmosis-std = { git = "https://github.com/permissionlessweb/osmosis-rust", rev = "cb7b4bc4892a8ad74eaaeeba56e634e119608d30", optional = true }
 prost = { version = "0.14.1", default-features = false }
 serde = "1.0.144"
 serde_json = "1.0.85"
 thiserror = "1.0.34"
 
 [dev-dependencies]
-cw1-whitelist = { path = "../../../cw-plus/contracts/cw1-whitelist" }
+cw1-whitelist = { git = "https://github.com/permissionlessweb/cw-plus", rev = "f7ef1aaafd368d811f268cf47360a7d808e74102" }
 rayon = "1.5.3"
