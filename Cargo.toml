@@ -1,6 +1,22 @@
 [workspace]
-members = [
-  "packages/*",
-  "test_contracts/*",
-]
+members = ["packages/*", "test_contracts/*"]
 resolver = "2"
+[patch.crates-io]
+
+abstract-cw-multi-test = { path = "../cw-multi-test-fork" }
+cosmrs = { path = "../cosmos-rust/cosmrs" }
+cosmwasm-schema = { path = "../cosmwasm/packages/schema" }
+cosmwasm-std = { path = "../cosmwasm/packages/std" }
+cw-storage-plus = { path = "../cw-storage-plus" }
+cw1-whitelist = { path = "../cw-plus/contracts/cw1-whitelist" }
+cw2 = { path = "../cw-minus/packages/cw2" }
+osmosis-std = { path = "../osmosis-rust/packages/osmosis-std" }
+
+cw-schema = { path = "../cosmwasm/packages/cw-schema" }
+cw-utils = { path = "../cw-minus/packages/cw-utils" }
+tendermint = { path = "../tendermint-rs/tendermint" }
+tendermint-rpc = { path = "../tendermint-rs/rpc" }
+tendermint-proto = { path = "../tendermint-rs/proto" }
+informalsystems-pbjson = { path = "../pbjson/pbjson" }
+cw20-ics20 = { path = "../cw-plus/contracts/cw20-ics20" }
+cw-controllers = { path = "../cw-minus/packages/controllers" }

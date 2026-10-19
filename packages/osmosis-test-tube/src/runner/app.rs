@@ -171,9 +171,11 @@ impl OsmosisTestApp {
     {
         let tx_body = tx::Body {
             messages: msgs.into_iter().map(Into::into).collect(),
-            non_critical_extension_options: vec![Any::from_msg(TxExtension {
+            non_critical_extension_options: vec![Any::from_msg(&TxExtension {
                 selected_authenticators: selected_authenticators.to_vec(),
-            })],
+            }
+            .to_proto_bytes())
+            .expect("TxExtension authetnicators")],
             ..Default::default()
         };
 

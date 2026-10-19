@@ -6,22 +6,6 @@ name = "test-tube"
 repository = "https://github.com/osmosis-labs/test-tube"
 version = "0.7.0"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-base64 = "0.21.5"
-cosmrs = { version = "0.23.0", features = ["cosmwasm", "rpc"], git = "https://github.com/permissionlessweb/cosmos-rust" }
-cosmwasm-std = { version = "3.0.1", features = ["stargate"] }
-osmosis-std  = { version = "0.26.0", git = "https://github.com/permissionlessweb/osmosis-rust", optional = true }
-prost = { version = "0.14.1", default-features = false }
-serde = "1.0.144"
-serde_json = "1.0.85"
-thiserror = "1.0.34"
-
-[dev-dependencies]
-cw1-whitelist  = { git = "https://github.com/permissionlessweb/cw-plus", version = "3.0.0"  }
-rayon = "1.5.3"
-
 [features]
 default = []
 module-wrappers = ["bank", "wasm"]
@@ -29,3 +13,19 @@ wasm-sudo = []
 
 bank = ["osmosis-std"]
 wasm = ["osmosis-std"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+base64 = "0.21.5"
+cosmrs = { version = "0.23.0", features = ["rpc"] }
+cosmwasm-std = { version = "=4.0.0-zk", features = ["stargate"] }
+osmosis-std = { version = "0.26.0", optional = true }
+prost = { version = "0.14.1", default-features = false }
+serde = "1.0.144"
+serde_json = "1.0.85"
+thiserror = "1.0.34"
+
+[dev-dependencies]
+cw1-whitelist = { version = "3.0.0" }
+rayon = "1.5.3"

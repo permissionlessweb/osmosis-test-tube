@@ -111,7 +111,13 @@ fn build_libosmosistesttube(out: PathBuf) {
         .arg("mod")
         .arg("tidy")
         .spawn()
-        .unwrap()
+        .unwrap_or_else(|e| {
+            panic!(
+                "failed to spawn `go` (is Go on PATH?): {e}. \
+        Build libosmosistesttube with Go 1.21+ and a C toolchain, or feature-gate \
+        osmosis-test-tube (e.g. dao-testing without `--features test-tube`)."
+            )
+        })
         .wait()
         .unwrap();
 
